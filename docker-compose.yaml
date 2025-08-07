@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8
+    container_name: mysql-haymart
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_hay_mart
+      MYSQL_USER: wahyu
+      MYSQL_PASSWORD: wahyu123
+    ports:
+      - "3307:3306"  
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./UAS JAVA/hay_mart
+      dockerfile: Dockerfile
+    container_name: spring-backend
+    ports:
+      - "8081:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/db_hay_mart
+      SPRING_DATASOURCE_USERNAME: wahyu
+      SPRING_DATASOURCE_PASSWORD: wahyu123
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: react-frontend
+    ports:
+      - "3000:80"  
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:

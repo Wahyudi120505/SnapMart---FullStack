@@ -1,6 +1,9 @@
 package com.example.hay_mart.init;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -43,18 +46,29 @@ public class InitialDataLoader implements ApplicationRunner {
         }
 
         if (akunRepository.findAll().isEmpty()) {
-            Resource resource = new ClassPathResource("static/images/default.png");
-            byte[] imageBytes = Files.readAllBytes(resource.getFile().toPath());
-            User admin = User.builder()
-                    .userId(null)
-                    .email("admin123@gmail.com")
-                    .nama("ADMIN")
-                    .password(passwordEncoder.encode("ADMIN"))
-                    .role(roleRepository.findRoleByRoleName(RoleConstant.ROLE_ADMIN))
-                    .image(new SerialBlob(imageBytes))
-                    .status("active")
-                    .build();
-            akunRepository.save(admin);
+            try {
+                Resource resource = new ClassPathResource("static/images/default.png");
+                byte[] imageBytes;
+
+                try (InputStream inputStream = resource.getInputStream()) {
+                    imageBytes = inputStream.readAllBytes();
+                }
+
+                User admin = User.builder()
+                        .userId(null)
+                        .email("admin123@gmail.com")
+                        .nama("ADMIN")
+                        .password(passwordEncoder.encode("ADMIN"))
+                        .role(roleRepository.findRoleByRoleName(RoleConstant.ROLE_ADMIN))
+                        .image(new SerialBlob(imageBytes))
+                        .status("active")
+                        .build();
+
+                akunRepository.save(admin);
+
+            } catch (IOException | SQLException e) {
+                throw new RuntimeException("Gagal inisialisasi admin default: " + e.getMessage(), e);
+            }
         }
 
         if (kategoriRepository.findAll().isEmpty()) {

@@ -1,6 +1,7 @@
 package com.example.hay_mart.services.login;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -78,7 +79,6 @@ public class LoginServiceImpl implements LoginService {
         CustomUserDetails userDetails = new CustomUserDetails(user);
         String token = jwtUtil.generateToken(userDetails);
 
-
         return new LoginResponse(token, user.getRole().getRoleName(), user.getNama(), user.getEmail());
     }
 
@@ -111,8 +111,11 @@ public class LoginServiceImpl implements LoginService {
         try {
             // Membaca gambar default
             Resource resource = new ClassPathResource("static/images/default.png");
-            byte[] imageBytes = Files.readAllBytes(resource.getFile().toPath());
+            byte[] imageBytes;
 
+            try (InputStream inputStream = resource.getInputStream()) {
+                imageBytes = inputStream.readAllBytes();
+            }
             User newUser = User.builder()
                     .nama(request.getNama())
                     .email(request.getEmail())
