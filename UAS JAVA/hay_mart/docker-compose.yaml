@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mysql-haymart:
+    container_name: mysql-haymart
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_hay_mart
+      MYSQL_USER: wahyu
+      MYSQL_PASSWORD: wahyu123
+    volumes:
+      - mysql-haymart-data:/var/lib/mysql
+
+volumes:
+  mysql-haymart-data:
+    name: mysql-haymart-data
