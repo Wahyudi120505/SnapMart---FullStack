@@ -14,7 +14,7 @@ Cocok digunakan untuk minimarket, apotek, toko fashion, maupun retail lainnya.
 
 ### 1. 🔒 Authentication & Authorization
 
-- **Register User**: Untuk registrasi kasir/admin baru. Akun akan berstatus pending sampai email diverifikasi.
+- **Register User**: Untuk registrasi kasir baru. Akun akan berstatus pending sampai email diverifikasi.
 - **Login User**: Mendapatkan JWT Token untuk akses fitur selanjutnya.
 - **Email Verification**: Sistem kirim kode verifikasi ke email user. User harus memverifikasi agar status aktif.
 - **Forgot Password**: Kirim OTP ke email untuk melakukan reset password.
