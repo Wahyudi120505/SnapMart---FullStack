@@ -1,9 +1,33 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../../services/AuthService";
-import { Mail, Loader, ArrowRight, ShoppingCart } from "lucide-react";
+import { Mail, Loader, ArrowRight, ShoppingBasket } from "lucide-react";
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120
+    }
+  }
+};
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -47,126 +71,89 @@ const ForgotPassword = () => {
     }
   };
 
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-orange-500 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Grid Pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`,
-          backgroundSize: "50px 50px",
-        }}
-      ></div>
-
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-md relative z-10"
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4 sm:p-6 md:p-8">
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="w-full max-w-md"
       >
-        <div className="flex flex-col items-center mb-8">
+        {/* Logo & Title */}
+        <motion.div variants={itemVariants} className="flex flex-col items-center mb-8">
           <motion.div
-            animate={{
-              rotate: [0, 3, -3, 0],
-              scale: [1, 1.05, 1],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 6,
-              ease: "easeInOut",
-            }}
-            className="relative"
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            className="mb-4"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-full blur-lg opacity-50 animate-pulse"></div>
-            <div className="relative bg-gradient-to-r from-orange-600 to-red-600 p-4 rounded-full shadow-2xl">
-              <ShoppingCart className="w-8 h-8 text-white" />
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-2xl shadow-lg">
+              <ShoppingBasket className="w-8 h-8 text-white" />
             </div>
           </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-4xl font-bold mt-6 bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 bg-clip-text text-transparent tracking-wide"
-          >
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             SnapMart POS
-          </motion.h1>
+          </h1>
+          <p className="text-gray-400 mt-2 text-center">Modern Retail Management Solution</p>
+        </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-slate-400 mt-3 text-lg font-medium tracking-wide"
-          >
-            Password Recovery
-          </motion.p>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-          className="bg-slate-800/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-slate-700/50 relative overflow-hidden"
+        {/* Forgot Password Card */}
+        <motion.div 
+          variants={itemVariants}
+          className="bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700"
         >
-          {/* Card Glow Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 rounded-2xl pointer-events-none"></div>
-          
           {isSuccess ? (
-            <div className="text-center space-y-6">
+            <motion.div variants={itemVariants} className="text-center space-y-6">
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto border border-green-500/30">
                 <Mail className="w-8 h-8 text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-xl font-bold text-white">
                 Reset Link Sent!
               </h2>
-              <p className="text-slate-400">
+              <p className="text-gray-400 text-sm">
                 We've sent an OTP code to your email. Please check your inbox and follow the instructions to reset your password.
               </p>
               <div className="pt-4">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto"></div>
+                <Loader className="animate-spin h-10 w-10 text-blue-400 mx-auto" />
               </div>
-            </div>
+            </motion.div>
           ) : (
             <>
-              <div className="mb-6 text-center">
-                <h2 className="text-2xl font-bold text-white">
+              <motion.div 
+                variants={itemVariants}
+                className="mb-6 text-center"
+              >
+                <h2 className="text-xl font-bold text-white">
                   Forgot Password?
                 </h2>
-                <p className="text-slate-400 mt-2">
+                <p className="text-gray-400 mt-2 text-sm">
                   Enter your email to receive a password reset OTP
                 </p>
-              </div>
+              </motion.div>
 
+              {/* Error Message */}
               {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-sm text-red-300 flex items-center backdrop-blur-sm"
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 p-3 bg-red-900/30 border border-red-700/50 rounded-lg text-sm text-red-200 flex items-center"
                 >
                   <div className="w-2 h-2 bg-red-500 rounded-full mr-3 animate-pulse"></div>
-                  <span>{error}</span>
+                  {error}
                 </motion.div>
               )}
 
-              <form onSubmit={handleForgotPassword} className="space-y-6">
-                <div>
+              <form onSubmit={handleForgotPassword} className="space-y-5">
+                {/* Email Field */}
+                <motion.div variants={itemVariants}>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-semibold text-slate-300 mb-2 tracking-wide"
+                    className="block text-sm font-medium text-gray-300 mb-2"
                   >
-                    EMAIL ADDRESS
+                    Email Address
                   </label>
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-                      <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-orange-400 transition-colors duration-200" />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
                       type="email"
@@ -175,57 +162,50 @@ const ForgotPassword = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full pl-12 pr-4 py-3.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 text-sm backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
+                      className="bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-4 py-3 text-sm"
                       placeholder="your@email.com"
                     />
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-red-500/0 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
-                </div>
+                </motion.div>
 
+                {/* Submit Button */}
                 <motion.button
-                  whileHover={{ scale: 1.02, y: -1 }}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center items-center bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white font-bold rounded-xl px-6 py-3.5 text-center transition-all duration-300 shadow-lg hover:shadow-orange-500/25 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                  className="w-full flex justify-center items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-medium rounded-lg px-4 py-3 text-center transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   {isLoading ? (
-                    <span className="flex items-center relative z-10">
-                      <Loader className="animate-spin h-5 w-5 text-white mr-3" />
+                    <span className="flex items-center">
+                      <Loader className="animate-spin h-5 w-5 text-white mr-2" />
                       Sending OTP...
                     </span>
                   ) : (
-                    <span className="flex items-center relative z-10 tracking-wide">
-                      SEND OTP
-                      <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                    <span className="flex items-center">
+                      Send OTP
+                      <ArrowRight className="ml-2 h-5 w-5" />
                     </span>
                   )}
                 </motion.button>
               </form>
 
-              <div className="mt-6 text-center">
+              <motion.div variants={itemVariants} className="mt-6 text-center">
                 <button
                   onClick={() => navigate("/")}
-                  className="text-orange-400 hover:text-orange-300 font-medium transition-colors duration-200"
+                  className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200 text-sm"
                 >
                   Remember your password? Login
                 </button>
-              </div>
+              </motion.div>
             </>
           )}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="mt-8 text-center text-sm text-slate-500"
-        >
-          <p className="font-medium">
-            © {new Date().getFullYear()} SnapMart POS System - Professional
-            Edition
-          </p>
+        {/* Footer */}
+        <motion.div variants={itemVariants} className="mt-6 text-center text-sm text-gray-500">
+          <p>© {new Date().getFullYear()} SnapMart POS System</p>
         </motion.div>
       </motion.div>
     </div>

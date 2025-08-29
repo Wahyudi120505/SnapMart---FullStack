@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef } from "react";
-import { Pencil, Save, X, Camera, User, ChevronLeft } from "lucide-react";
+import { Pencil, Save, Camera, User, ChevronLeft, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { KasirService } from "../../services/CashierService";
 import { AuthService } from "../../services/AuthService";
@@ -30,6 +30,27 @@ const ProfileController = () => {
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    let timer;
+    if (error || success) {
+      timer = setTimeout(() => {
+        setError("");
+        setSuccess("");
+      }, 5000); 
+    }
+    return () => clearTimeout(timer);
+  }, [error, success]);
+
+  useEffect(() => {
+    let timer;
+    if (otpError) {
+      timer = setTimeout(() => {
+        setOtpError("");
+      }, 10000); 
+    }
+    return () => clearTimeout(timer);
+  }, [otpError]);
 
   const fetchProfile = async () => {
     try {
@@ -169,17 +190,11 @@ const ProfileController = () => {
         setOtpError(response.message || "Kode OTP tidak valid");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setOtpError("Terjadi kesalahan saat memverifikasi OTP");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleOtpCancel = () => {
-    setShowOtpModal(false);
-    setOtp("");
-    setOtpError("");
   };
 
   useEffect(() => {
@@ -199,7 +214,7 @@ const ProfileController = () => {
   if (loading && !profile.nama) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -209,13 +224,13 @@ const ProfileController = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pt-24 px-6 pb-6 relative overflow-hidden"
+      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white pt-5 px-4 pb-6 relative overflow-hidden"
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-orange-500 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-72 h-72 bg-purple-500 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500 rounded-full blur-3xl"></div>
       </div>
 
       {/* Grid Pattern */}
@@ -228,14 +243,14 @@ const ProfileController = () => {
       ></div>
 
       <div className="relative z-0 max-w-4xl mx-auto">
-        <div className="flex items-center mb-8">
+        <div className="flex items-center mb-6">
           <motion.h1
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.6 }}
-            className="text-3xl font-bold bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 bg-clip-text text-transparent tracking-wide"
+            className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent tracking-wide"
           >
-            Cashier Profile
+            Profile Information
           </motion.h1>
         </div>
 
@@ -243,14 +258,14 @@ const ProfileController = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-slate-700/50 p-6 relative overflow-hidden z-0"
+          className="bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-gray-700/50 p-4 sm:p-6 relative overflow-hidden z-0"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 pointer-events-none"></div>
-          
-          <div className="flex flex-col md:flex-row gap-8 relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none"></div>
+
+          <div className="flex flex-col md:flex-row gap-6 sm:gap-8">
             {/* Profile Picture Section */}
             <div className="flex flex-col items-center">
-              <div className="relative w-40 h-40 rounded-full bg-slate-700/50 border-2 border-slate-600/50 overflow-hidden">
+              <div className="relative w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gray-700/50 border-2 border-gray-600/50 overflow-hidden">
                 {previewImage ? (
                   <img
                     src={previewImage}
@@ -258,8 +273,8 @@ const ProfileController = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-500">
-                    <User className="w-20 h-20" />
+                  <div className="w-full h-full flex items-center justify-center text-gray-500">
+                    <User className="w-16 h-16 sm:w-20 sm:h-20" />
                   </div>
                 )}
                 {isEditing && (
@@ -267,10 +282,11 @@ const ProfileController = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={triggerFileInput}
-                    className="absolute bottom-0 left-0 right-0 bg-black/70 text-white py-2 flex items-center justify-center gap-1 text-sm"
+                    className="absolute bottom-0 left-0 right-0 bg-black/70 text-white py-2 flex items-center justify-center gap-1 text-xs sm:text-sm"
+                    aria-label="Change profile photo"
                   >
                     <Camera className="w-4 h-4" />
-                    Change Photo
+                    <span>Ganti Foto</span>
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -282,44 +298,47 @@ const ProfileController = () => {
                 )}
               </div>
               {!isEditing && profile.id && (
-                <p className="mt-3 text-sm text-slate-400">ID: {profile.id}</p>
+                <p className="mt-3 text-sm text-gray-400">ID: {profile.id}</p>
               )}
             </div>
 
             {/* Profile Info Section */}
             <div className="flex-1">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-white">Profile Information</h2>
+              <div className="flex justify-between items-center mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl font-semibold text-white">Profile Information</h2>
                 {!isEditing ? (
                   <motion.button
-                    whileHover={{ scale: 1.02, y: -1 }}
+                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleEdit}
-                    className="flex items-center gap-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300"
+                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-3 py-2 rounded-lg shadow-md hover:shadow-blue-500/25 transition-all duration-300 text-sm sm:text-base"
+                    aria-label="Edit profile"
                   >
-                    <Pencil className="w-5 h-5" />
+                    <Pencil className="w-4 h-4 sm:w-5 sm:h-5" />
                     Edit Profile
                   </motion.button>
                 ) : (
                   <div className="flex gap-2">
                     <motion.button
-                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleCancel}
-                      className="flex items-center gap-2 bg-slate-700/50 hover:bg-slate-700/70 text-white px-4 py-2 rounded-xl shadow-lg transition-all duration-300"
+                      className="flex items-center gap-2 bg-gray-700/50 hover:bg-gray-700/70 text-gray-300 px-3 py-2 rounded-lg shadow-md transition-all duration-300 text-sm sm:text-base"
+                      aria-label="Cancel edit"
                     >
-                      <X className="w-5 h-5" />
+                      <X className="w-4 h-4 sm:w-5 sm:h-5" />
                       Cancel
                     </motion.button>
                     <motion.button
-                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleSave}
-                      className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-green-500/25 transition-all duration-300"
+                      className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-3 py-2 rounded-lg shadow-md hover:shadow-blue-500/25 transition-all duration-300 text-sm sm:text-base"
                       disabled={loading}
+                      aria-label="Save profile"
                     >
-                      <Save className="w-5 h-5" />
-                      {loading ? "Keep..." : "Save"}
+                      <Save className="w-4 h-4 sm:w-5 sm:h-5" />
+                      {loading ? "Menyimpan..." : "Simpan"}
                     </motion.button>
                   </div>
                 )}
@@ -329,7 +348,7 @@ const ProfileController = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 bg-red-500/20 text-red-300 rounded-md border border-red-500/30"
+                  className="mb-4 p-3 bg-red-500/20 text-red-300 rounded-lg border border-red-500/30 text-sm sm:text-base"
                 >
                   {error}
                 </motion.div>
@@ -339,16 +358,16 @@ const ProfileController = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 bg-green-500/20 text-green-300 rounded-md border border-green-500/30"
+                  className="mb-4 p-3 bg-green-500/20 text-green-300 rounded-lg border border-green-500/30 text-sm sm:text-base"
                 >
                   {success}
                 </motion.div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
                       Name
                     </label>
                     {isEditing ? (
@@ -357,16 +376,17 @@ const ProfileController = () => {
                         name="nama"
                         value={editData.nama}
                         onChange={handleChange}
-                        className="w-full p-3 bg-slate-700/50 border border-slate-600/50 text-white rounded-lg focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
+                        className="w-full p-3 bg-gray-700/50 border border-gray-600/50 text-white rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 text-sm sm:text-base"
                         placeholder="Masukkan nama"
+                        aria-label="Nama"
                       />
                     ) : (
-                      <p className="text-lg font-medium text-white">{profile.nama || "-"}</p>
+                      <p className="text-base sm:text-lg font-medium text-white">{profile.nama || "-"}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
                       Email
                     </label>
                     {isEditing ? (
@@ -375,30 +395,31 @@ const ProfileController = () => {
                         name="email"
                         value={editData.email}
                         onChange={handleChange}
-                        className="w-full p-3 bg-slate-700/50 border border-slate-600/50 text-white rounded-lg focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300"
+                        className="w-full p-3 bg-gray-700/50 border border-gray-600/50 text-white rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 text-sm sm:text-base"
                         placeholder="Masukkan email"
+                        aria-label="Email"
                       />
                     ) : (
-                      <p className="text-lg font-medium text-white">
+                      <p className="text-base sm:text-lg font-medium text-white">
                         {profile.email || "-"}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
                       Role
                     </label>
-                    <p className="text-lg font-medium text-white">{profile.role || "-"}</p>
+                    <p className="text-base sm:text-lg font-medium text-white">{profile.role || "-"}</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
                       Join On
                     </label>
-                    <p className="text-lg font-medium text-white">
+                    <p className="text-base sm:text-lg font-medium text-white">
                       {formatDate(profile.starDate)}
                     </p>
                   </div>
@@ -417,42 +438,35 @@ const ProfileController = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-20"
-            onClick={() => setShowOtpModal(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            role="dialog"
+            aria-labelledby="otp-modal-title"
+            aria-modal="true"
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl max-w-md w-full border border-slate-700/50 relative z-20"
-              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-xl max-w-md w-full p-4 sm:p-6 border border-gray-700/50 relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 pointer-events-none"></div>
-              <div className="sticky top-0 bg-slate-800/90 p-4 border-b border-slate-700/50 flex justify-between items-center">
-                <h2 className="text-xl font-bold text-white tracking-wide">
-                  Email Verification
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none"></div>
+              <div className="border-b border-gray-700/50 pb-3 mb-4">
+                <h2 id="otp-modal-title" className="text-lg sm:text-xl font-bold text-white tracking-wide">
+                  Verifikasi Email
                 </h2>
-                <motion.button
-                  whileHover={{ rotate: 90 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleOtpCancel}
-                  className="text-slate-400 hover:text-orange-400 transition-colors duration-200"
-                >
-                  <X className="w-6 h-6" />
-                </motion.button>
               </div>
 
-              <div className="p-6">
-                <p className="text-slate-400 mb-6">
-                  Enter the OTP code sent to{" "}
-                  <span className="text-orange-400">{editData.email}</span>
+              <div className="space-y-4">
+                <p className="text-gray-300 text-sm sm:text-base">
+                  Masukkan kode OTP yang dikirim ke{" "}
+                  <span className="text-blue-400 font-medium">{editData.email}</span>
                 </p>
                 {otpError && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-4 p-3 bg-red-500/20 text-red-300 rounded-md border border-red-500/30"
+                    className="p-3 bg-red-500/20 text-red-300 rounded-lg border border-red-500/30 text-sm sm:text-base"
                   >
                     {otpError}
                   </motion.div>
@@ -462,27 +476,19 @@ const ProfileController = () => {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   placeholder="Masukkan kode OTP"
-                  className="w-full p-3 bg-slate-700/50 border border-slate-600/50 text-white rounded-lg focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 mb-6"
+                  className="w-full p-3 bg-gray-700/50 border border-gray-600/50 text-white rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 text-sm sm:text-base"
+                  aria-label="Kode OTP"
                 />
-                <div className="flex gap-3 justify-end">
-                  <motion.button
-                    whileHover={{ scale: 1.02, y: -1 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleOtpCancel}
-                    className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700/70 text-white rounded-xl shadow-lg transition-all duration-300"
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02, y: -1 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleOtpSubmit}
-                    className="px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300"
-                    disabled={loading}
-                  >
-                    {loading ? "Memverifikasi..." : "Verifikasi"}
-                  </motion.button>
-                </div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleOtpSubmit}
+                  className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-lg text-sm sm:text-base font-semibold shadow-md hover:shadow-blue-500/25 transition-all duration-300"
+                  disabled={loading}
+                  aria-label="Verifikasi OTP"
+                >
+                  {loading ? "Memverifikasi..." : "Verifikasi"}
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>

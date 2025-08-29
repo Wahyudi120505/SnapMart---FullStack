@@ -16,8 +16,6 @@ import { OrderService } from "../../services/OrderService";
 import { useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
@@ -161,13 +159,13 @@ const DashboardKasir = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pt-24 px-6 pb-6 relative overflow-hidden"
+      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white pt-5 px-4 pb-6 relative overflow-hidden"
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-orange-500 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-72 h-72 bg-purple-500 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500 rounded-full blur-3xl"></div>
       </div>
 
       {/* Grid Pattern */}
@@ -180,37 +178,36 @@ const DashboardKasir = () => {
       ></div>
 
       <div className="relative z-0 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <motion.h1
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.6 }}
-            className="text-3xl font-bold bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 bg-clip-text text-transparent tracking-wide"
+            className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent tracking-wide"
           >
             Cashier Dashboard
           </motion.h1>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2">
             <motion.button
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 z-0"
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-3 py-2 rounded-lg shadow-lg transition-all duration-300 z-0 text-sm sm:text-base"
             >
-              <Filter className="w-5 h-5" />
-              Filter
+              <Filter className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Filter</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleCreateOrder}
-              className="flex items-center gap-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 z-0"
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-3 py-2 rounded-lg shadow-lg transition-all duration-300 z-0 text-sm sm:text-base"
             >
-              <PlusCircle className="w-5 h-5" />
+              <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5" />
               New Transaction
             </motion.button>
           </div>
         </div>
-
         {/* Filter Panel */}
         <AnimatePresence>
           {showFilters && (
@@ -219,20 +216,20 @@ const DashboardKasir = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-slate-700/50 p-4 sm:p-6 mb-8 relative z-0"
+              className="bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-gray-700/50 p-4 mb-6 relative z-0"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 pointer-events-none"></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
                 {/* Date Filter */}
                 <div>
-                  <h3 className="font-semibold text-slate-300 mb-2 sm:mb-3 tracking-wide text-sm sm:text-base">
+                  <h3 className="font-semibold text-gray-300 mb-2 tracking-wide text-sm">
                     Date Filter
                   </h3>
-                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-center gap-2">
                     <div className="relative w-full">
                       <label
                         htmlFor="startDate"
-                        className="block text-xs text-slate-400 mb-1"
+                        className="block text-xs text-gray-400 mb-1"
                       >
                         Start Date
                       </label>
@@ -249,16 +246,16 @@ const DashboardKasir = () => {
                               : null;
                             handleDateFilter([date, endDate]);
                           }}
-                          className="w-full p-2 sm:p-3 bg-slate-700/50 border border-slate-600/50 text-white rounded-lg focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm sm:text-base appearance-none"
+                          className="w-full p-2 bg-gray-700/50 border border-gray-600/50 text-white rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 text-sm appearance-none"
                         />
-                        <Calendar className="w-5 h-5 text-slate-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+                        <Calendar className="w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
                       </div>
                     </div>
 
                     <div className="relative w-full">
                       <label
                         htmlFor="endDate"
-                        className="block text-xs text-slate-400 mb-1"
+                        className="block text-xs text-gray-400 mb-1"
                       >
                         End Date
                       </label>
@@ -274,9 +271,9 @@ const DashboardKasir = () => {
                             handleDateFilter([startDate, date]);
                           }}
                           min={startDate ? format(startDate, "yyyy-MM-dd") : ""}
-                          className="w-full p-2 sm:p-3 bg-slate-700/50 border border-slate-600/50 text-white rounded-lg focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-300 text-sm sm:text-base appearance-none"
+                          className="w-full p-2 bg-gray-700/50 border border-gray-600/50 text-white rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 text-sm appearance-none"
                         />
-                        <Calendar className="w-5 h-5 text-slate-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+                        <Calendar className="w-4 h-4 text-gray-400 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
                       </div>
                     </div>
                   </div>
@@ -284,7 +281,7 @@ const DashboardKasir = () => {
 
                 {/* Total Amount Filter */}
                 <div>
-                  <h3 className="font-semibold text-slate-300 mb-2 sm:mb-3 tracking-wide text-sm sm:text-base">
+                  <h3 className="font-semibold text-gray-300 mb-2 tracking-wide text-sm">
                     Filter Total ({formatCurrency(totalRange[0])} -{" "}
                     {formatCurrency(totalRange[1])})
                   </h3>
@@ -295,24 +292,24 @@ const DashboardKasir = () => {
                     step={10000}
                     value={totalRange}
                     onChange={handleTotalFilter}
-                    trackStyle={[{ backgroundColor: "#f97316" }]}
+                    trackStyle={[{ backgroundColor: "#4f46e5" }]}
                     handleStyle={[
-                      { backgroundColor: "#f97316", borderColor: "#f97316" },
-                      { backgroundColor: "#f97316", borderColor: "#f97316" },
+                      { backgroundColor: "#4f46e5", borderColor: "#4f46e5" },
+                      { backgroundColor: "#4f46e5", borderColor: "#4f46e5" },
                     ]}
                   />
-                  <div className="flex justify-between text-xs sm:text-sm text-slate-400 mt-1 sm:mt-2">
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
                     <span>{formatCurrency(0)}</span>
                     <span>{formatCurrency(maxTotal)}</span>
                   </div>
                 </div>
               </div>
-              <div className="mt-3 sm:mt-4 flex justify-end">
+              <div className="mt-3 flex justify-end">
                 <motion.button
                   whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={clearFilters}
-                  className="text-xs sm:text-sm text-red-400 hover:text-red-300 font-semibold transition-colors duration-200 z-0"
+                  className="text-xs text-purple-400 hover:text-purple-300 font-semibold transition-colors duration-200 z-0"
                 >
                   Reset All Filters
                 </motion.button>
@@ -320,25 +317,26 @@ const DashboardKasir = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-slate-700/50 p-4 relative overflow-hidden z-0"
+            className="bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-gray-700/50 p-4 relative overflow-hidden z-0"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none"></div>
             <div className="flex items-center justify-between relative">
               <div>
-                <p className="text-sm font-semibold text-slate-400">
+                <p className="text-sm font-semibold text-gray-400">
                   Today's Transactions
                 </p>
-                <p className="text-2xl font-bold text-white mt-1">{stats.totalToday}</p>
+                <p className="text-xl sm:text-2xl font-bold text-white mt-1">
+                  {stats.totalToday}
+                </p>
               </div>
-              <div className="p-3 rounded-full bg-gradient-to-r from-orange-600 to-red-600">
-                <ShoppingBag className="w-6 h-6 text-white" />
+              <div className="p-2 sm:p-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600">
+                <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
             </div>
           </motion.div>
@@ -347,92 +345,93 @@ const DashboardKasir = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-slate-700/50 p-4 relative overflow-hidden z-0"
+            className="bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-gray-700/50 p-4 relative overflow-hidden z-0"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none"></div>
             <div className="flex items-center justify-between relative">
               <div>
-                <p className="text-sm font-semibold text-slate-400">
+                <p className="text-sm font-semibold text-gray-400">
                   Total Revenue
                 </p>
-                <p className="text-2xl font-bold text-white mt-1">
+                <p className="text-xl sm:text-2xl font-bold text-white mt-1">
                   {formatCurrency(stats.totalRevenue)}
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-gradient-to-r from-orange-600 to-red-600">
-                <DollarSign className="w-6 h-6 text-white" />
+              <div className="p-2 sm:p-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600">
+                <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
             </div>
           </motion.div>
         </div>
-
         {/* Transactions Table */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-slate-700/50 p-6 mb-8 relative overflow-hidden z-0"
+          className="bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-gray-700/50 p-4 sm:p-6 mb-6 relative overflow-hidden z-0"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none"></div>
           <div className="flex justify-between items-center mb-4 relative">
             <h2 className="text-lg font-semibold text-white tracking-wide">
               Transaction History
             </h2>
             {loading && (
-              <Loader2 className="w-5 h-5 text-orange-400 animate-spin" />
+              <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />
             )}
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="w-8 h-8 text-orange-400 animate-spin" />
+            <div className="flex justify-center items-center py-8 sm:py-12">
+              <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
             </div>
           ) : transactions.length === 0 ? (
-            <p className="text-slate-400 text-center py-8">There are no transactions yet</p>
+            <p className="text-gray-400 text-center py-8">
+              There are no transactions yet
+            </p>
           ) : filteredTransactions.length === 0 ? (
-            <p className="text-slate-400 text-center py-8">
+            <p className="text-gray-400 text-center py-8">
               No transactions were found that match the filter.
             </p>
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-700/50">
-                  <thead className="bg-slate-700/50">
+                <table className="min-w-full divide-y divide-gray-700/50">
+                  <thead className="bg-gray-700/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                      <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                         No
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                      <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                         Date
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                      <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                         Total
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                      <th className="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                         Items
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-700/50">
-                    {currentTransactions.map((transaction) => (
+                  <tbody className="divide-y divide-gray-700/50">
+                    {currentTransactions.map((transaction, index) => (
                       <motion.tr
                         key={transaction.pemesananId}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="hover:bg-slate-700/50 cursor-pointer transition-colors duration-200"
+                        className="hover:bg-gray-700/50 cursor-pointer transition-colors duration-200"
                         onClick={() => handleShowDetail(transaction)}
                       >
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                          #{transaction.pemesananId}
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium text-white">
+                          #{index + 1}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm text-gray-400">
                           {formatDate(transaction.tanggalPembelian)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium text-white">
                           {formatCurrency(transaction.totalHarga)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                        <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-sm text-gray-400">
                           {transaction.items.length} item
                         </td>
                       </motion.tr>
@@ -446,11 +445,14 @@ const DashboardKasir = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.6 }}
-                className="flex items-center justify-between mt-4 z-0"
+                className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-3 z-0"
               >
-                <div className="text-sm text-slate-400">
+                <div className="text-sm text-gray-400">
                   Showing {indexOfFirstTransaction + 1}-
-                  {Math.min(indexOfLastTransaction, filteredTransactions.length)}{" "}
+                  {Math.min(
+                    indexOfLastTransaction,
+                    filteredTransactions.length
+                  )}{" "}
                   from {filteredTransactions.length} transaction
                 </div>
                 <div className="flex items-center space-x-2">
@@ -461,16 +463,16 @@ const DashboardKasir = () => {
                       setCurrentPage((prev) => Math.max(prev - 1, 1))
                     }
                     disabled={currentPage === 1}
-                    className={`p-2 rounded-xl bg-slate-700/50 text-slate-300 ${
+                    className={`p-2 rounded-lg bg-gray-700/50 text-gray-300 ${
                       currentPage === 1
                         ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-slate-700/70 hover:text-orange-400"
+                        : "hover:bg-gray-700/70 hover:text-blue-400"
                     } transition-all duration-200 z-0`}
                   >
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.button>
 
-                  <span className="text-sm text-slate-300">
+                  <span className="text-sm text-gray-300">
                     page {currentPage} from {totalPages}
                   </span>
 
@@ -481,29 +483,28 @@ const DashboardKasir = () => {
                       setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                     }
                     disabled={currentPage === totalPages}
-                    className={`p-2 rounded-xl bg-slate-700/50 text-slate-300 ${
+                    className={`p-2 rounded-lg bg-gray-700/50 text-gray-300 ${
                       currentPage === totalPages
                         ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-slate-700/70 hover:text-orange-400"
+                        : "hover:bg-gray-700/70 hover:text-blue-400"
                     } transition-all duration-200 z-0`}
                   >
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </motion.button>
                 </div>
               </motion.div>
             </>
           )}
         </motion.div>
-
-        {/* Quick Actions */}
+        {/* Best Selling Products */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-slate-700/50 p-6 relative overflow-hidden z-0"
+          className="bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-gray-700/50 p-4 sm:p-6 relative overflow-hidden z-0"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 pointer-events-none"></div>
-          <h3 className="font-semibold text-slate-300 mb-3 tracking-wide relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 pointer-events-none"></div>
+          <h3 className="font-semibold text-gray-300 mb-3 tracking-wide relative">
             Best Selling Products
           </h3>
           <div className="space-y-3 relative">
@@ -530,25 +531,27 @@ const DashboardKasir = () => {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex justify-between items-center border-b border-slate-700/50 pb-2 last:border-b-0"
+                    className="flex justify-between items-center border-b border-gray-700/50 pb-2 last:border-b-0"
                   >
                     <div>
-                      <p className="font-medium text-white">{item.namaProduk}</p>
-                      <p className="text-sm text-slate-400">
+                      <p className="font-medium text-white text-sm sm:text-base">
+                        {item.namaProduk}
+                      </p>
+                      <p className="text-xs sm:text-sm text-gray-400">
                         Sold: {item.jumlah}
                       </p>
                     </div>
-                    <p className="font-medium text-orange-400">
+                    <p className="font-medium text-blue-400 text-sm sm:text-base">
                       {formatCurrency(item.subtotal)}
                     </p>
                   </motion.div>
                 ))
             ) : (
-              <p className="text-slate-400">No product data</p>
+              <p className="text-gray-400">No product data</p>
             )}
           </div>
         </motion.div>
-
+        
         {/* Transaction Detail Modal */}
         <AnimatePresence>
           {showDetailModal && selectedTransaction && (
@@ -557,69 +560,96 @@ const DashboardKasir = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-20"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-70"
               onClick={() => setShowDetailModal(false)}
+              style={{ paddingTop: "80px" }}
             >
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                className="bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-slate-700/50 relative z-20"
-                onClick={(e) => e.stopPropagation()}
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 25 }}
+                className="fixed bottom-0 left-0 right-0 w-full max-h-[80vh] sm:max-h-[85vh] bg-gray-800/95 backdrop-blur-xl shadow-xl z-40 p-4 sm:p-6 overflow-y-auto border-t border-gray-700/50 sm:rounded-t-xl sm:max-w-md sm:mx-auto sm:bottom-auto sm:top-[55%] sm:-translate-y-1/2 sm:min-h-[400px] lg:max-w-lg"
+                role="dialog"
+                aria-labelledby="cart-title"
+                style={{
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "#4b5563 #1f2937",
+                }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10 pointer-events-none"></div>
-                <div className="sticky top-0 bg-slate-800/90 p-4 border-b border-slate-700/50 flex justify-between items-center">
-                  <h2 className="text-xl font-bold text-white tracking-wide">
-                    Transaction Details #{selectedTransaction.pemesananId}
+                {/* Header */}
+                <div className=" top-0 bg-gray-800/95 p-3 sm:p-4 border-b border-gray-700/50 flex justify-between items-center z-90">
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-wide">
+                    Transaksi #{selectedTransaction.pemesananId}
                   </h2>
                   <motion.button
                     whileHover={{ rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setShowDetailModal(false)}
-                    className="text-slate-400 hover:text-orange-400 transition-colors duration-200"
+                    className="text-gray-400 hover:text-blue-400 transition-colors duration-200"
+                    aria-label="Close transaction details"
                   >
-                    <X className="w-6 h-6" />
+                    <X className="w-5 h-5 sm:w-6 sm:h-6" />
                   </motion.button>
                 </div>
 
-                <div className="p-6">
+                {/* Content */}
+                <div className="overflow-y-auto flex-1 p-3 sm:p-4 md:p-6 relative z-10">
                   <div className="space-y-4">
+                    {/* Cashier */}
                     <div>
-                      <h3 className="font-semibold text-slate-400 tracking-wide">Cashier</h3>
-                      <p className="text-lg text-white">{selectedTransaction.namaKasir || "-"}</p>
+                      <h3 className="font-semibold text-gray-400 tracking-wide text-xs sm:text-sm">
+                        Kasir
+                      </h3>
+                      <p className="text-sm sm:text-base text-white">
+                        {selectedTransaction.namaKasir || "-"}
+                      </p>
                     </div>
 
+                    {/* Date */}
                     <div>
-                      <h3 className="font-semibold text-slate-400 tracking-wide">Date</h3>
-                      <p className="text-lg text-white">{formatDate(selectedTransaction.tanggalPembelian)}</p>
+                      <h3 className="font-semibold text-gray-400 tracking-wide text-xs sm:text-sm">
+                        Tanggal
+                      </h3>
+                      <p className="text-sm sm:text-base text-white">
+                        {formatDate(selectedTransaction.tanggalPembelian)}
+                      </p>
                     </div>
 
-                    <div>
-                      <h3 className="font-semibold text-slate-400 tracking-wide">Total</h3>
-                      <p className="text-2xl font-bold text-orange-400">
+                    {/* Total */}
+                    <div className="pt-2 border-t border-gray-700/40">
+                      <h3 className="font-semibold text-gray-400 tracking-wide text-xs sm:text-sm">
+                        Total
+                      </h3>
+                      <p className="text-xl sm:text-2xl font-bold text-blue-400">
                         {formatCurrency(selectedTransaction.totalHarga)}
                       </p>
                     </div>
 
+                    {/* Items */}
                     <div>
-                      <h3 className="font-semibold text-slate-400 mb-2 tracking-wide">Items</h3>
-                      <div className="space-y-3">
+                      <h3 className="font-semibold text-gray-400 mb-2 tracking-wide text-xs sm:text-sm">
+                        Item
+                      </h3>
+                      <div className="space-y-2 sm:space-y-3">
                         {selectedTransaction.items.map((item, index) => (
                           <motion.div
                             key={index}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="flex justify-between items-center border-b border-slate-700/50 pb-2 last:border-b-0"
+                            className="grid grid-cols-2 gap-2 border-b border-gray-700/40 pb-2 last:border-b-0"
                           >
                             <div>
-                              <p className="font-medium text-white">{item.namaProduk}</p>
-                              <p className="text-sm text-slate-400">
-                                {item.jumlah} x {formatCurrency(item.hargaSatuan)}
+                              <p className="font-medium text-white text-sm sm:text-base truncate">
+                                {item.namaProduk}
+                              </p>
+                              <p className="text-xs sm:text-sm text-gray-400">
+                                {item.jumlah} x{" "}
+                                {formatCurrency(item.hargaSatuan)}
                               </p>
                             </div>
-                            <p className="font-medium text-orange-400">
+                            <p className="text-right font-medium text-blue-400 text-sm sm:text-base">
                               {formatCurrency(item.subtotal)}
                             </p>
                           </motion.div>
@@ -627,26 +657,14 @@ const DashboardKasir = () => {
                       </div>
                     </div>
                   </div>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02, y: -1 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => setShowDetailModal(false)}
-                    className="mt-6 w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white py-2 rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 z-20"
-                  >
-                    Close
-                  </motion.button>
                 </div>
               </motion.div>
             </motion.div>
           )}
-        </AnimatePresence>
+        </AnimatePresence>{" "}
       </div>
     </motion.div>
   );
 };
 
 export default DashboardKasir;
-
-
-

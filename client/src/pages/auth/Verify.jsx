@@ -1,17 +1,38 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthService } from "../../services/AuthService";
 import {
   MailCheck,
-  AlertCircle,
   Loader,
   ArrowRight,
-  ShoppingCart,
-  Lock,
-  Edit,
+  ShoppingBasket,
 } from "lucide-react";
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120
+    }
+  }
+};
 
 const Verify = () => {
   const location = useLocation();
@@ -80,140 +101,153 @@ const Verify = () => {
     }
   };
 
-  const handleEditRegistration = () => {
-    navigate("/register", { state: { email } });
-  };
-
   return (
-    <div className="min-h-screen bg-blue-50 text-gray-800 flex flex-col items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4 sm:p-6 md:p-8">
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
         className="w-full max-w-md"
       >
-        <div className="flex flex-col items-center mb-8">
+        {/* Logo & Title */}
+        <motion.div variants={itemVariants} className="flex flex-col items-center mb-8">
           <motion.div
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ repeat: Infinity, duration: 4 }}
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            className="mb-4"
           >
-            <ShoppingCart className="w-12 h-12 text-green-600" />
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-2xl shadow-lg">
+              <ShoppingBasket className="w-8 h-8 text-white" />
+            </div>
           </motion.div>
-          <h1 className="text-3xl font-bold mt-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             SnapMart POS
           </h1>
-          <p className="text-gray-600 mt-2">Email Verification</p>
-        </div>
+          <p className="text-gray-400 mt-2 text-center">Modern Retail Management Solution</p>
+        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="bg-white rounded-xl shadow-xl p-8 border border-gray-200 text-center"
+        {/* Verification Card */}
+        <motion.div 
+          variants={itemVariants}
+          className="bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700"
         >
           {isVerified ? (
-            <div className="space-y-4">
-              <MailCheck className="w-16 h-16 text-green-500 mx-auto" />
-              <h2 className="text-2xl font-semibold">Email Verified!</h2>
-              <p className="text-gray-600">
-                Your email has been successfully verified. You'll be redirected
-                to login shortly.
+            <motion.div variants={itemVariants} className="text-center space-y-6">
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto border border-green-500/30">
+                <MailCheck className="w-8 h-8 text-green-400" />
+              </div>
+              <h2 className="text-xl font-bold text-white">
+                Email Verified!
+              </h2>
+              <p className="text-gray-400 text-sm">
+                Your email has been successfully verified. You'll be redirected to login shortly.
               </p>
               <div className="pt-4">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600 mx-auto"></div>
+                <Loader className="animate-spin h-10 w-10 text-blue-400 mx-auto" />
               </div>
-            </div>
+            </motion.div>
           ) : (
             <>
-              <div className="flex items-center justify-center mb-6">
-                <Lock className="w-6 h-6 text-green-600 mr-2" />
-                <h2 className="text-xl font-semibold">Enter OTP Code</h2>
-              </div>
+              <motion.div 
+                variants={itemVariants}
+                className="mb-6 text-center"
+              >
+                <h2 className="text-xl font-bold text-white">
+                  Enter OTP Code
+                </h2>
+                <p className="text-gray-400 mt-2 text-sm">
+                  We've sent an 8-digit OTP code to <span className="text-blue-400">{email}</span>
+                </p>
+              </motion.div>
 
+              {/* Error Message */}
               {error && (
-                <motion.div
+                <motion.div 
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg text-sm text-red-700 flex items-center"
+                  className="mb-4 p-3 bg-red-900/30 border border-red-700/50 rounded-lg text-sm text-red-200 flex items-center"
                 >
-                  <AlertCircle className="w-5 h-5 mr-2" />
-                  <span>{error}</span>
+                  <div className="w-2 h-2 bg-red-500 rounded-full mr-3 animate-pulse"></div>
+                  {error}
                 </motion.div>
               )}
 
-              <p className="text-gray-600 mb-4">
-                We've sent an 8-digit OTP code to:{" "}
-                <span className="font-medium">{email}</span>
-              </p>
-
-              <form onSubmit={handleVerify} className="space-y-4">
-                <div>
-                  <label htmlFor="otp" className="sr-only">
+              <form onSubmit={handleVerify} className="space-y-5">
+                {/* OTP Field */}
+                <motion.div variants={itemVariants}>
+                  <label
+                    htmlFor="otp"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     OTP Code
                   </label>
-                  <input
-                    type="text"
-                    id="otp"
-                    name="otp"
-                    value={otp}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
-                      setOtp(value);
-                    }}
-                    required
-                    maxLength={8}
-                    className="w-full px-4 py-3 text-center text-lg font-medium border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    placeholder="12345678"
-                  />
-                </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="otp"
+                      name="otp"
+                      value={otp}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+                        setOtp(value);
+                      }}
+                      required
+                      maxLength={8}
+                      className="bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full px-4 py-3 text-sm"
+                      placeholder="Enter 8-digit OTP"
+                    />
+                  </div>
+                </motion.div>
 
-                <div className="text-sm text-gray-500">
+                {/* OTP Timer */}
+                <motion.div variants={itemVariants} className="text-sm text-gray-400 text-center">
                   {!canResend ? (
                     <p>OTP expires in: {formatTime(timeLeft)}</p>
                   ) : (
-                    <p className="text-red-500">OTP has expired</p>
+                    <p className="text-red-400">OTP has expired</p>
                   )}
-                </div>
+                </motion.div>
 
+                {/* Verify OTP Button */}
                 <motion.button
+                  variants={itemVariants}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center items-center bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500 text-white font-medium rounded-lg px-5 py-2.5 text-center transition-all duration-300"
+                  className="w-full flex justify-center items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-medium rounded-lg px-4 py-3 text-center transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <span className="flex items-center">
-                      <Loader className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                      <Loader className="animate-spin h-5 w-5 text-white mr-2" />
                       Verifying...
                     </span>
                   ) : (
                     <span className="flex items-center">
-                      Verify OTP <ArrowRight className="ml-2 h-4 w-4" />
+                      Verify OTP
+                      <ArrowRight className="ml-2 h-5 w-5" />
                     </span>
                   )}
                 </motion.button>
-              </form>
 
-              <div className="mt-4 flex justify-between items-center text-sm">
-                <button
-                  type="button"
-                  onClick={handleEditRegistration}
-                  className="text-gray-600 hover:text-gray-800 font-medium flex items-center"
-                >
-                  <Edit className="w-4 h-4 mr-1" />
-                  Edit registration
-                </button>
-              </div>
+                {/* Back to Register Button */}
+                <motion.div variants={itemVariants} className="mt-6 text-center">
+                  <button
+                    onClick={() => navigate("/register", { state: { email } })}
+                    className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200 text-sm"
+                  >
+                    Back to Register
+                  </button>
+                </motion.div>
+              </form>
             </>
           )}
         </motion.div>
 
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>
-            © {new Date().getFullYear()} SnapMart POS System. All rights reserved.
-          </p>
-        </div>
+        {/* Footer */}
+        <motion.div variants={itemVariants} className="mt-6 text-center text-sm text-gray-500">
+          <p>© {new Date().getFullYear()} SnapMart POS System</p>
+        </motion.div>
       </motion.div>
     </div>
   );

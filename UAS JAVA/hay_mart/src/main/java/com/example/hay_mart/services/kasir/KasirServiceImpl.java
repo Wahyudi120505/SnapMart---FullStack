@@ -129,6 +129,10 @@ public class KasirServiceImpl implements KasirService {
 
         User kasir = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+        
+        if (kasir.getIsVerified() == Boolean.FALSE) {
+            throw new RuntimeException("Akun belum terverifikasi. Silakan verifikasi email Anda.");   
+        }
 
         String image = null;
         try {
@@ -173,9 +177,21 @@ public class KasirServiceImpl implements KasirService {
 
         log.info("Nama: {}, Email: {}", currentUser.getNama(), currentUser.getEmail());
 
-        // Set new data
+        // Send verification email if a new email was provided
+        if (newEmail != null && !newEmail.isEmpty()) {
+            emailService.sendVerificationEmail(newEmail, req.getNama(), verificationCode);
+        }
+
+        if (currentUser.getVerificationCode() != null && currentUser.getVerificationCodeExpiry() != null) {
+            if (currentUser.getVerificationCodeExpiry().isAfter(LocalDateTime.now())) {
+                throw new RuntimeException("Kode verifikasi sebelumnya masih berlaku. Silakan periksa email Anda.");
+            }
+        }
+
+        // Set verification code and expiry
         currentUser.setVerificationCode(verificationCode);
         currentUser.setVerificationCodeExpiry(LocalDateTime.now().plusMinutes(5));
+        currentUser.setStatus("pending");
         currentUser.setIsVerified(false);
         currentUser.setNama(req.getNama());
         // Handle image upload
@@ -189,9 +205,5 @@ public class KasirServiceImpl implements KasirService {
 
         userRepository.save(currentUser);
 
-        // Send verification email if a new email was provided
-        if (newEmail != null && !newEmail.isEmpty()) {
-            emailService.sendVerificationEmail(newEmail, req.getNama(), verificationCode);
-        }
     }
 }

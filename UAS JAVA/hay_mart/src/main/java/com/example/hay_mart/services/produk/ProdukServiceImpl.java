@@ -185,6 +185,8 @@ public class ProdukServiceImpl implements ProdukService {
             produkRepository.save(produk);
 
             laporanProduk.setDeleted(false);
+            laporanProduk.setStok(uproduk.getStok());
+            laporanProduk.setHargaSatuan(uproduk.getHarga());
             laporanProdukRepository.save(laporanProduk);
 
         } catch (IOException | SQLException e) {
@@ -199,7 +201,7 @@ public class ProdukServiceImpl implements ProdukService {
 
         LaporanProduk laporanProduk = laporanProdukRepository.findByProdukProdukId(produk.getProdukId());
 
-        produk.setDeleted(true); // flag sebagai dihapus
+        produk.setDeleted(true);
         laporanProduk.setDeleted(true);
         produkRepository.save(produk);
         laporanProdukRepository.save(laporanProduk);

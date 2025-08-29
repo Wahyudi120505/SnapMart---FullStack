@@ -10,9 +10,34 @@ import {
   Loader2,
   ArrowUp,
   ArrowDown,
-  X,
+  RefreshCw,
 } from "lucide-react";
 import { saveAs } from "file-saver";
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 10, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+};
 
 const LaporanPendapatanController = () => {
   const [loading, setLoading] = useState(false);
@@ -38,7 +63,8 @@ const LaporanPendapatanController = () => {
     }
   };
 
-  const handleDateFilter = () => {
+  const handleDateFilter = (e) => {
+    e.preventDefault();
     if (!dateRange.startDate || !dateRange.endDate) {
       setError("Please select both start and end dates");
       return;
@@ -50,8 +76,13 @@ const LaporanPendapatanController = () => {
     );
   };
 
+  const handleReset = () => {
+    setDateRange({ startDate: "", endDate: "" });
+    setError(null);
+  };
+
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="flex min-h-screen bg-gray-900 text-white">
       <AdminSidebar menuActive="laporan" />
 
       <motion.main
@@ -62,34 +93,60 @@ const LaporanPendapatanController = () => {
       >
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-orange-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-600 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-72 h-72 bg-purple-600 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Header Section */}
-        <div className="mb-8 relative z-10">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 bg-clip-text text-transparent">
+        {/* Header Section - Aligned with KasirController */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="mb-6 relative z-10"
+        >
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+            <motion.div variants={itemVariants} className="max-[884px]:pl-12">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Income Reports
               </h1>
-              <p className="text-slate-400 mt-2 text-sm sm:text-base">
+              <p className="text-gray-400 mt-1 text-sm sm:text-base">
                 Generate and download financial statements in Excel format
               </p>
-            </div>
+            </motion.div>
           </div>
-        </div>
+
+          {/* Error Message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="mt-6 p-4 bg-red-900/30 border border-red-700/50 rounded-xl text-sm text-red-200 flex items-center backdrop-blur-sm"
+            >
+              <div className="w-2 h-2 bg-red-500 rounded-full mr-3 animate-pulse"></div>
+              <span>{error}</span>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleDateFilter({ preventDefault: () => {} })}
+                className="ml-auto px-3 py-1 text-sm bg-red-900/20 text-red-200 rounded-lg hover:bg-red-900/30 transition-colors duration-200"
+                aria-label="Retry fetching data"
+              >
+                Retry
+              </motion.button>
+            </motion.div>
+          )}
+        </motion.div>
 
         {/* Report Card */}
-        <div className="bg-slate-800/70 backdrop-blur-md rounded-xl p-6 mb-8 border border-slate-700/50 relative z-10">
+        <div className="bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 mb-8 border border-gray-700/50 relative z-10">
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-            <Download className="text-orange-400 w-5 h-5" />
+            <Download className="text-blue-400 w-5 h-5" />
             <span>Report Options</span>
           </h2>
 
           {/* Quick Report Buttons */}
           <div className="mb-8">
-            <h3 className="text-sm font-medium text-slate-400 mb-4">
+            <h3 className="text-sm font-medium text-gray-400 mb-4">
               Quick Reports
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -126,78 +183,103 @@ const LaporanPendapatanController = () => {
             </div>
           </div>
 
-          {/* Date Filter Section */}
-          <div className="border-t border-slate-700 pt-6">
-            <h3 className="text-sm font-medium text-slate-400 mb-4 flex items-center gap-2">
-              <Calendar className="text-orange-400 w-5 h-5" />
+          {/* Date Filter Section - Aligned with KasirController */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="border-t border-gray-700 pt-6"
+          >
+            <h3 className="text-sm font-medium text-gray-400 mb-4 flex items-center gap-2">
+              <Calendar className="text-blue-400 w-5 h-5" />
               <span>Custom Date Range</span>
             </h3>
 
-            <div className="flex flex-col md:flex-row gap-4 items-end">
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <DateInput
-                  label="Start Date"
-                  value={dateRange.startDate}
-                  onChange={(e) =>
-                    setDateRange({ ...dateRange, startDate: e.target.value })
-                  }
-                />
-                <DateInput
-                  label="End Date"
-                  value={dateRange.endDate}
-                  onChange={(e) =>
-                    setDateRange({ ...dateRange, endDate: e.target.value })
-                  }
-                />
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleDateFilter}
-                className="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-500 hover:to-red-500 transition-all duration-200 flex items-center justify-center gap-2 relative overflow-hidden group"
-                disabled={loading}
-              >
-                {/* Button content */}
-                <span className="relative z-10 flex items-center gap-2">
-                  {loading ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <Download className="w-5 h-5" />
-                  )}
-                  Generate Report
-                </span>
-
-                {/* Animated hover overlay */}
-                <span className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></span>
-              </motion.button>
-            </div>
-          </div>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0 }}
-            className="bg-red-900/30 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg flex items-start justify-between gap-3 relative z-10"
-          >
-            <div className="flex items-start gap-3">
-              <AlertCircle className="text-red-400 w-5 h-5 mt-0.5 flex-shrink-0" />
-              <div>
-                <h3 className="text-sm font-medium text-red-300">Error</h3>
-                <p className="text-sm text-red-200 mt-1">{error}</p>
-              </div>
-            </div>
-            <button
-              onClick={() => setError(null)}
-              className="text-red-300 hover:text-white p-1 rounded-full hover:bg-red-500/30 transition-colors"
-              aria-label="Dismiss error"
+            <form
+              onSubmit={handleDateFilter}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
             >
-              <X />
-            </button>
+              <motion.div variants={itemVariants}>
+                <label
+                  htmlFor="startDate"
+                  className="block text-sm font-medium text-gray-300 mb-1"
+                >
+                  Start Date
+                </label>
+                <div className="relative group">
+                  <input
+                    id="startDate"
+                    type="date"
+                    value={dateRange.startDate}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, startDate: e.target.value })
+                    }
+                    className="w-full pl-10 pr-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                  />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-400 transition-colors duration-200" />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600/5 to-purple-600/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <label
+                  htmlFor="endDate"
+                  className="block text-sm font-medium text-gray-300 mb-1"
+                >
+                  End Date
+                </label>
+                <div className="relative group">
+                  <input
+                    id="endDate"
+                    type="date"
+                    value={dateRange.endDate}
+                    onChange={(e) =>
+                      setDateRange({ ...dateRange, endDate: e.target.value })
+                    }
+                    className="w-full pl-10 pr-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                  />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-400 transition-colors duration-200" />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600/5 to-purple-600/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                variants={itemVariants}
+                className="col-span-1 sm:col-span-2 lg:col-span-2 flex items-end gap-3"
+              >
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleReset}
+                  className="w-full sm:w-auto bg-gray-700/50 border border-gray-600 text-gray-300 px-4 py-2.5 rounded-xl hover:bg-gray-700/70 hover:text-white transition-all duration-200 flex items-center justify-center disabled:opacity-50 backdrop-blur-sm"
+                  disabled={loading}
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Reset
+                </motion.button>
+
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2.5 rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all duration-200 flex items-center justify-center disabled:opacity-50 shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group"
+                  disabled={loading}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="flex items-center gap-2">
+                    {loading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Download className="w-5 h-5" />
+                    )}
+                    Generate
+                  </span>
+                </motion.button>
+              </motion.div>
+            </form>
           </motion.div>
-        )}
+        </div>
 
         {/* Loading Overlay */}
         {loading && (
@@ -206,8 +288,8 @@ const LaporanPendapatanController = () => {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-12 relative z-10"
           >
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mb-4"></div>
-            <span className="text-slate-400 text-sm">Loading reports...</span>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <span className="text-gray-400 text-sm">Loading reports...</span>
           </motion.div>
         )}
       </motion.main>
@@ -222,14 +304,14 @@ const ReportButton = ({ onClick, label, description, loading }) => {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="flex flex-col items-center justify-center p-4 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-orange-500/30 group"
+      className="flex flex-col items-center justify-center p-4 backdrop-blur-sm rounded-2xl border border-gray-700/50 overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-blue-500/30 group"
       disabled={loading}
     >
       <span className="font-medium flex items-center gap-2 text-white">
-        <Download className="w-4 h-4 text-orange-400" />
+        <Download className="w-4 h-4 text-blue-400" />
         {label}
       </span>
-      <span className="text-xs text-slate-400 mt-1">{description}</span>
+      <span className="text-xs text-gray-400 mt-1">{description}</span>
       <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
     </motion.button>
   );
@@ -237,15 +319,19 @@ const ReportButton = ({ onClick, label, description, loading }) => {
 
 const DateInput = ({ label, value, onChange }) => (
   <div>
-    <label className="block text-sm font-medium text-slate-400 mb-1.5">
+    <label className="block text-sm font-medium text-gray-300 mb-1">
       {label}
     </label>
-    <input
-      type="date"
-      className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm text-white"
-      value={value}
-      onChange={onChange}
-    />
+    <div className="relative group">
+      <input
+        type="date"
+        className="w-full pl-10 pr-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+        value={value}
+        onChange={onChange}
+      />
+      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-400 transition-colors duration-200" />
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600/5 to-purple-600/5 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+    </div>
   </div>
 );
 
@@ -257,8 +343,8 @@ const SummaryCard = ({ title, value, trend, percentage, color }) => {
   };
 
   return (
-    <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700/50">
-      <h3 className="text-sm font-medium text-slate-400">{title}</h3>
+    <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+      <h3 className="text-sm font-medium text-gray-400">{title}</h3>
       <p className="text-2xl font-bold text-white mt-1">{value}</p>
       <div className={`flex items-center mt-2 text-sm ${colorClasses[color]}`}>
         {trend === "up" ? (

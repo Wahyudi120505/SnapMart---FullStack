@@ -20,6 +20,31 @@ import {
 } from "lucide-react";
 import AdminSidebar from "../../componens/admin/AdminSidebar";
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 10, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+};
+
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -93,7 +118,7 @@ const ProductManagement = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [pagination.page, filters]);
+  }, [pagination.page, pagination.size, filters]); 
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -129,6 +154,7 @@ const ProductManagement = () => {
 
   const totalPages = Math.ceil(pagination.totalItems / pagination.size);
 
+  // Removed useCallback, now a regular async function
   const handleAddProduct = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -143,7 +169,14 @@ const ProductManagement = () => {
       if (response.success) {
         fetchProducts();
         setShowAddModal(false);
-        resetForm();
+        setNewProduct({
+          nama: "",
+          harga: "",
+          stok: "",
+          keterangan: "",
+          kategori: "",
+        });
+        setProductImage(null);
       }
     } catch (err) {
       setError(err.message || "Failed to add product");
@@ -152,29 +185,21 @@ const ProductManagement = () => {
     }
   };
 
-  const resetForm = () => {
-    setNewProduct({
-      nama: "",
-      harga: "",
-      stok: "",
-      keterangan: "",
-      kategori: "",
-    });
-    setProductImage(null);
-  };
-
+  // Removed useCallback, now a regular function
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setProductImage(e.target.files[0]);
     }
   };
 
+  // Removed useCallback, now a regular function
   const handleUpdateImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setUpdateImage(e.target.files[0]);
     }
   };
 
+  // Removed useCallback, now a regular function
   const openUpdateModal = (product) => {
     setCurrentProductId(product.id);
     setUpdateProduct({
@@ -191,6 +216,7 @@ const ProductManagement = () => {
     setShowUpdateModal(true);
   };
 
+  // Removed useCallback, now a regular async function
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -217,6 +243,7 @@ const ProductManagement = () => {
     }
   };
 
+  // Removed useCallback, now a regular async function
   const handleDeleteProduct = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?"))
       return;
@@ -240,32 +267,40 @@ const ProductManagement = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="flex min-h-screen bg-gray-900 text-white">
       <AdminSidebar menuActive="produk" />
 
       <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-orange-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-600 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-72 h-72 bg-purple-600 rounded-full blur-3xl"></div>
         </div>
-
         {/* Header Section */}
-        <div className="mb-6 relative z-10">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 bg-clip-text text-transparent">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="mb-6 relative z-10"
+        >
+          <div className="flex flex-col items-center justify-center sm:flex-row sm:justify-between sm:items-center gap-4">
+            <motion.div
+              variants={itemVariants}
+              className="text-center sm:text-left max-[884px]:pl-12"
+            >
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Product Management
               </h1>
-              <p className="text-slate-400 mt-1 text-sm sm:text-base">
+              <p className="text-gray-400 mt-1 text-sm sm:text-base">
                 Manage your store products
               </p>
-            </div>
+            </motion.div>
             <motion.button
+              variants={itemVariants}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowAddModal(true)}
-              className="w-full sm:w-auto bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2.5 rounded-xl hover:from-orange-500 hover:to-red-500 transition-all duration-200 flex items-center justify-center disabled:opacity-50 shadow-lg hover:shadow-orange-500/25 relative overflow-hidden group"
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2.5 rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all duration-200 flex items-center justify-center disabled:opacity-50 shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group"
               disabled={loading}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -277,68 +312,72 @@ const ProductManagement = () => {
           {/* Error Message */}
           {error && (
             <motion.div
+              variants={itemVariants}
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              className="mt-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-sm text-red-300 flex items-center backdrop-blur-sm"
+              className="mt-6 p-4 bg-red-900/30 border border-red-700/50 rounded-xl text-sm text-red-200 flex items-center backdrop-blur-sm"
             >
               <div className="w-2 h-2 bg-red-500 rounded-full mr-3 animate-pulse"></div>
               <span>{error}</span>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setError(null)}
-                className="ml-auto px-3 py-1 text-sm bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors duration-200"
+                className="ml-auto px-3 py-1 text-sm bg-red-900/20 text-red-200 rounded-lg hover:bg-red-900/30 transition-colors duration-200"
                 aria-label="Dismiss error"
               >
                 <X size={16} />
-              </button>
+              </motion.button>
             </motion.div>
           )}
-        </div>
-
+        </motion.div>
         {/* Filters Section */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-slate-800/80 backdrop-blur-xl p-4 sm:p-6 rounded-2xl shadow-2xl border border-slate-700/50 mb-6 relative z-10"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="bg-gray-800/80 backdrop-blur-xl p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-700/50 mb-6 relative z-10"
         >
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-medium text-white">Filters</h2>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="md:hidden text-slate-400 hover:text-orange-400 transition-colors"
+              className="md:hidden text-gray-400 hover:text-blue-400 transition-colors"
             >
               <Sliders size={20} />
-            </button>
+            </motion.button>
           </div>
 
           <div className={`${isFilterOpen ? "block" : "hidden md:block"}`}>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Name
                 </label>
                 <div className="relative group">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-orange-400 transition-colors" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
                   <input
                     type="text"
                     name="nama"
                     value={filters.nama}
                     onChange={handleFilterChange}
-                    className="w-full pl-10 pr-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
+                    className="w-full pl-10 pr-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
                     placeholder="Search products"
                   />
                 </div>
-              </div>
+              </motion.div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
+              <motion.div variants={itemVariants}>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Category
                 </label>
                 <select
                   name="kategori"
                   value={filters.kategori}
                   onChange={handleFilterChange}
-                  className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
+                  className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
                 >
                   <option value="">All Categories</option>
                   <option value="Makanan">Food</option>
@@ -348,11 +387,14 @@ const ProductManagement = () => {
                   <option value="Elektronik">Electronics</option>
                   <option value="Kecantikan">Beauty</option>
                 </select>
-              </div>
+              </motion.div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-2 gap-3"
+              >
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     Min Price
                   </label>
                   <input
@@ -360,13 +402,13 @@ const ProductManagement = () => {
                     name="minPrice"
                     value={filters.minPrice}
                     onChange={handleFilterChange}
-                    className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
                     placeholder="Min"
                     min="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     Max Price
                   </label>
                   <input
@@ -374,14 +416,17 @@ const ProductManagement = () => {
                     name="maxPrice"
                     value={filters.maxPrice}
                     onChange={handleFilterChange}
-                    className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
                     placeholder="Max"
                     min="0"
                   />
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="flex items-end space-x-2">
+              <motion.div
+                variants={itemVariants}
+                className="flex items-end space-x-2"
+              >
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -396,7 +441,7 @@ const ProductManagement = () => {
                     });
                     setPagination((prev) => ({ ...prev, page: 1 }));
                   }}
-                  className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600/50 text-slate-300 rounded-xl hover:bg-slate-700/70 hover:text-white transition-all duration-200 backdrop-blur-sm"
+                  className="w-full px-4 py-2.5 bg-gray-700/50 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-700/70 hover:text-white transition-all duration-200 backdrop-blur-sm"
                 >
                   Reset
                 </motion.button>
@@ -404,37 +449,38 @@ const ProductManagement = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={fetchProducts}
-                  className="w-full px-4 py-2.5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-lg hover:shadow-orange-500/25 relative overflow-hidden group"
+                  className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all duration-200 shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   Apply
                 </motion.button>
-              </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
-
         {/* Product Content Section */}
         {loading ? (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
             className="flex flex-col items-center justify-center py-12 relative z-10"
           >
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mb-4"></div>
-            <span className="text-slate-400 text-sm">Loading products...</span>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <span className="text-gray-400 text-sm">Loading products...</span>
           </motion.div>
         ) : products.length === 0 ? (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-12 text-center bg-slate-800/30 rounded-2xl border border-slate-700/50 relative z-10"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col items-center justify-center py-12 text-center bg-gray-800/30 rounded-2xl border border-gray-700/50 relative z-10"
           >
-            <Frown className="h-12 w-12 text-slate-500 mb-4" />
-            <h3 className="text-lg font-medium text-slate-300 mb-1">
+            <Frown className="h-12 w-12 text-gray-500 mb-4" />
+            <h3 className="text-lg font-medium text-gray-300 mb-1">
               No Products Found
             </h3>
-            <p className="text-slate-500 max-w-md">
+            <p className="text-gray-400 max-w-md">
               {error
                 ? "Error loading products"
                 : "Try adjusting your search filters"}
@@ -444,7 +490,7 @@ const ProductManagement = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={fetchProducts}
-                className="mt-4 px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl hover:from-orange-500 hover:to-red-500 transition-colors duration-200"
+                className="mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-500 hover:to-purple-500 transition-colors duration-200"
               >
                 Try Again
               </motion.button>
@@ -453,23 +499,34 @@ const ProductManagement = () => {
         ) : (
           <>
             {/* Sorting Controls */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 relative z-10">
-              <div className="text-sm text-slate-400">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 relative z-10"
+            >
+              <motion.div
+                variants={itemVariants}
+                className="text-sm text-gray-400"
+              >
                 Showing {(pagination.page - 1) * pagination.size + 1}-
                 {Math.min(
                   pagination.page * pagination.size,
                   pagination.totalItems
                 )}{" "}
                 of {pagination.totalItems} products
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-400 whitespace-nowrap">
+              </motion.div>
+              <motion.div
+                variants={itemVariants}
+                className="flex items-center gap-2"
+              >
+                <span className="text-sm text-gray-400 whitespace-nowrap">
                   Sort by:
                 </span>
                 <select
                   value={filters.sortBy}
                   onChange={(e) => handleSort(e.target.value)}
-                  className="px-3 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm text-slate-200 backdrop-blur-sm"
+                  className="px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-200 backdrop-blur-sm"
                 >
                   <option value="nama">Name</option>
                   <option value="harga">Price</option>
@@ -478,7 +535,7 @@ const ProductManagement = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleSort(filters.sortBy)}
-                  className="p-2 text-slate-400 hover:text-orange-400 hover:bg-slate-700/50 rounded-xl transition-all"
+                  className="p-2 text-gray-400 hover:text-blue-400 hover:bg-gray-700/50 rounded-xl transition-all"
                 >
                   {filters.sortOrder === "asc" ? (
                     <ChevronUp className="h-4 w-4" />
@@ -486,18 +543,24 @@ const ProductManagement = () => {
                     <ChevronDown className="h-4 w-4" />
                   )}
                 </motion.button>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Product Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10">
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10"
+            >
               {products.map((product, index) => (
                 <motion.div
                   key={index}
+                  variants={itemVariants}
                   whileHover={{ y: -5 }}
-                  className="bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-orange-500/30 group"
+                  className="bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-gray-700/50 overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-blue-500/30 group"
                 >
-                  <div className="relative h-48 bg-slate-700/30">
+                  <div className="relative h-40 sm:h-48 bg-gray-700/30">
                     {product.image ? (
                       <img
                         src={`data:image/jpeg;base64,${product.image}`}
@@ -505,7 +568,7 @@ const ProductManagement = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-500">
+                      <div className="w-full h-full flex items-center justify-center text-gray-500">
                         <Package className="h-12 w-12" />
                       </div>
                     )}
@@ -513,8 +576,8 @@ const ProductManagement = () => {
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           product.status === "Tersedia"
-                            ? "bg-green-900/50 text-green-300 border border-green-700/50"
-                            : "bg-red-900/50 text-red-300 border border-red-700/50"
+                            ? "bg-green-600 text-white border border-green-700"
+                            : "bg-red-600 text-white border border-red-700"
                         }`}
                       >
                         {product.status}
@@ -524,20 +587,20 @@ const ProductManagement = () => {
                   <div className="p-4">
                     <div className="flex justify-between items-start gap-2">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-white line-clamp-1 group-hover:text-orange-400 transition-colors">
+                        <h3 className="font-semibold text-white line-clamp-1 group-hover:text-blue-400 transition-colors">
                           {product.nama}
                         </h3>
-                        <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                        <p className="text-xs text-gray-400 mt-1 line-clamp-2">
                           {product.keterangan}
                         </p>
                       </div>
-                      <span className="px-2 py-1 bg-slate-700/50 text-slate-300 rounded-full text-xs whitespace-nowrap border border-slate-600/50">
+                      <span className="px-2 py-1 bg-gray-700/50 text-gray-300 rounded-full text-xs whitespace-nowrap border border-gray-600/50">
                         {product.kategori}
                       </span>
                     </div>
                     <div className="mt-3 flex justify-between items-center">
                       <div>
-                        <p className="font-bold text-white-400">
+                        <p className="font-bold text-white">
                           {formatPrice(product.harga)}
                         </p>
                         <p
@@ -557,7 +620,7 @@ const ProductManagement = () => {
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           onClick={() => openUpdateModal(product)}
-                          className="p-2 text-orange-400 hover:bg-orange-500/10 rounded-full transition-colors border border-orange-500/20"
+                          className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-full transition-colors border border-blue-500/20"
                           title="Edit"
                         >
                           <Edit className="h-4 w-4" />
@@ -576,21 +639,32 @@ const ProductManagement = () => {
                   </div>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-                <div className="text-sm text-slate-400">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10"
+              >
+                <motion.div
+                  variants={itemVariants}
+                  className="text-sm text-gray-400"
+                >
                   Page {pagination.page} of {totalPages}
-                </div>
-                <nav className="flex items-center gap-2">
+                </motion.div>
+                <nav
+                  className="flex items-center gap-2"
+                  aria-label="Pagination"
+                >
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handlePageChange(pagination.page - 1)}
                     disabled={pagination.page === 1}
-                    className="p-2 rounded-xl bg-slate-700/50 border border-slate-600/50 text-slate-300 hover:bg-slate-700/70 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="p-2 rounded-xl bg-gray-700/50 border border-gray-600 text-gray-300 hover:bg-gray-700/70 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </motion.button>
@@ -607,11 +681,15 @@ const ProductManagement = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handlePageChange(pageNum)}
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
                           pagination.page === pageNum
-                            ? "bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg"
-                            : "bg-slate-700/50 border border-slate-600/50 text-slate-300 hover:bg-slate-700/70 hover:text-white"
+                            ? "bg-gradient-to-r from-blue-600 to-purple-600 border-transparent text-white shadow-lg"
+                            : "bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700/70 hover:text-white"
                         } transition-all duration-200`}
+                        aria-label={`Go to page ${pageNum}`}
+                        aria-current={
+                          pagination.page === pageNum ? "page" : undefined
+                        }
                       >
                         {pageNum}
                       </motion.button>
@@ -623,151 +701,178 @@ const ProductManagement = () => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handlePageChange(pagination.page + 1)}
                     disabled={pagination.page >= totalPages}
-                    className="p-2 rounded-xl bg-slate-700/50 border border-slate-600/50 text-slate-300 hover:bg-slate-700/70 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="p-2 rounded-xl bg-gray-700/50 border border-gray-600 text-gray-300 hover:bg-gray-700/70 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </motion.button>
                 </nav>
-              </div>
+              </motion.div>
             )}
           </>
         )}
-
         {/* Add Product Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-slate-700/50 relative"
+              className="relative bg-gray-800/90 backdrop-blur-xl rounded-2xl shadow-xl w-11/12 sm:w-96 border border-gray-700/50 max-h-[90vh] overflow-y-auto"
+              style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "#4b5563 #1f2937",
+              }}
             >
-              <div className="flex justify-between items-center p-6 border-b border-slate-700/50">
-                <h3 className="text-xl font-bold tracking-tight bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+              {/* Header */}
+              <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-700/50 bg-gradient-to-r from-gray-800 to-gray-800/70">
+                <h3 className="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   Add New Product
                 </h3>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setShowAddModal(false)}
-                  className="text-slate-400 hover:text-orange-400 transition-colors"
+                  className="p-2 rounded-full hover:bg-gray-700/50 transition-colors group"
+                  aria-label="Close modal"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5 text-gray-400 group-hover:text-blue-400 transition-colors" />
                 </motion.button>
               </div>
 
-              <form onSubmit={handleAddProduct} className="p-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Product Name
-                    </label>
-                    <input
-                      type="text"
-                      value={newProduct.nama}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, nama: e.target.value })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      required
-                    />
-                  </div>
+              {/* Form scrollable */}
+              <form
+                onSubmit={handleAddProduct}
+                className="p-4 sm:p-6 space-y-4 min-h-[400px]"
+              >
+                {/* Product Name */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Product Name
+                  </label>
+                  <input
+                    type="text"
+                    value={newProduct.nama}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, nama: e.target.value })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    required
+                    aria-label="Product Name"
+                  />
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Price
-                    </label>
-                    <input
-                      type="number"
-                      value={newProduct.harga}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, harga: e.target.value })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      min="0"
-                      required
-                    />
-                  </div>
+                {/* Price */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Price
+                  </label>
+                  <input
+                    type="number"
+                    value={newProduct.harga}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, harga: e.target.value })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    min="0"
+                    required
+                    aria-label="Product Price"
+                  />
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Stock
-                    </label>
-                    <input
-                      type="number"
-                      value={newProduct.stok}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, stok: e.target.value })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      min="0"
-                      required
-                    />
-                  </div>
+                {/* Stock */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Stock
+                  </label>
+                  <input
+                    type="number"
+                    value={newProduct.stok}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, stok: e.target.value })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    min="0"
+                    required
+                    aria-label="Product Stock"
+                  />
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Category
-                    </label>
-                    <select
-                      value={newProduct.kategori}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, kategori: e.target.value })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      required
-                    >
-                      <option value="">Select Category</option>
-                      <option value="Makanan">Food</option>
-                      <option value="Minuman">Drink</option>
-                      <option value="Aksesoris">Accessories</option>
-                      <option value="Obat-obatan">Medicine</option>
-                      <option value="Elektronik">Electronics</option>
-                      <option value="Kecantikan">Beauty</option>
-                    </select>
-                  </div>
+                {/* Category */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Category
+                  </label>
+                  <select
+                    value={newProduct.kategori}
+                    onChange={(e) =>
+                      setNewProduct({
+                        ...newProduct,
+                        kategori: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    required
+                    aria-label="Product Category"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Makanan">Food</option>
+                    <option value="Minuman">Drink</option>
+                    <option value="Aksesoris">Accessories</option>
+                    <option value="Obat-obatan">Medicine</option>
+                    <option value="Elektronik">Electronics</option>
+                    <option value="Kecantikan">Beauty</option>
+                  </select>
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Description
-                    </label>
-                    <textarea
-                      value={newProduct.keterangan}
-                      onChange={(e) =>
-                        setNewProduct({
-                          ...newProduct,
-                          keterangan: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      rows="3"
-                    />
-                  </div>
+                {/* Description */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Description
+                  </label>
+                  <textarea
+                    value={newProduct.keterangan}
+                    onChange={(e) =>
+                      setNewProduct({
+                        ...newProduct,
+                        keterangan: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    rows="3"
+                    aria-label="Product Description"
+                  />
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Product Image
-                    </label>
-                    <input
-                      type="file"
-                      onChange={handleImageChange}
-                      className="block w-full text-sm text-slate-400
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-xl file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-orange-900/30 file:text-orange-400
-                        hover:file:bg-orange-900/50"
-                      accept="image/*"
-                    />
-                  </div>
-                </div>
+                {/* Product Image */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Product Image
+                  </label>
+                  <input
+                    type="file"
+                    onChange={handleImageChange}
+                    className="block w-full text-sm text-gray-400
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-xl file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-900/30 file:text-blue-400
+              hover:file:bg-blue-900/50 hover:file:shadow-sm hover:file:shadow-blue-500/25 transition-all duration-200"
+                    accept="image/*"
+                    aria-label="Upload Product Image"
+                  />
+                </motion.div>
 
-                <div className="mt-6 flex justify-end space-x-3">
+                {/* Actions */}
+                <motion.div
+                  variants={itemVariants}
+                  className="mt-6 flex justify-end space-x-3"
+                >
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     type="button"
                     onClick={() => setShowAddModal(false)}
-                    className="px-4 py-2.5 border border-slate-600/50 text-slate-300 rounded-xl hover:bg-slate-700/50 transition-all duration-200"
+                    className="px-4 py-2.5 bg-gray-700/50 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-700/70 hover:text-white transition-all duration-200"
+                    aria-label="Cancel adding product"
                   >
                     Cancel
                   </motion.button>
@@ -776,28 +881,35 @@ const ProductManagement = () => {
                     whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={loading}
-                    className="px-4 py-2.5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl hover:from-orange-500 hover:to-red-500 disabled:opacity-50 flex items-center shadow-lg hover:shadow-orange-500/25 relative overflow-hidden group"
+                    className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-500 hover:to-purple-500 disabled:opacity-50 flex items-center shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group"
+                    aria-label="Add product"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    {loading && <Loader2 className="animate-spin h-4 w-4 mr-2" />}
+                    {loading && (
+                      <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    )}
                     Add Product
                   </motion.button>
-                </div>
+                </motion.div>
               </form>
             </motion.div>
           </div>
         )}
-
         {/* Update Product Modal */}
         {showUpdateModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-slate-700/50 relative"
+              className="relative bg-gray-800/90 backdrop-blur-xl rounded-2xl shadow-xl w-11/12 sm:w-96 border border-gray-700/50 max-h-[90vh] overflow-y-auto"
+              style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "#4b5563 #1f2937",
+              }}
             >
-              <div className="flex justify-between items-center p-6 border-b border-slate-700/50">
-                <h3 className="text-xl font-bold tracking-tight bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+              {/* Header */}
+              <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-700/50 bg-gradient-to-r from-gray-800 to-gray-800/70">
+                <h3 className="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   Update Product
                 </h3>
                 <motion.button
@@ -807,148 +919,167 @@ const ProductManagement = () => {
                     setShowUpdateModal(false);
                     setUpdateImage(null);
                   }}
-                  className="text-slate-400 hover:text-orange-400 transition-colors"
+                  className="p-2 rounded-full hover:bg-gray-700/50 transition-colors group"
+                  aria-label="Close modal"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5 text-gray-400 group-hover:text-blue-400 transition-colors" />
                 </motion.button>
               </div>
 
-              <form onSubmit={handleUpdateProduct} className="p-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Product Name
-                    </label>
-                    <input
-                      type="text"
-                      value={updateProduct.nama}
-                      onChange={(e) =>
-                        setUpdateProduct({
-                          ...updateProduct,
-                          nama: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      required
-                    />
-                  </div>
+              {/* Form scrollable */}
+              <form
+                onSubmit={handleUpdateProduct}
+                className="p-4 sm:p-6 space-y-4 min-h-[400px]"
+              >
+                {/* Product Name */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Product Name
+                  </label>
+                  <input
+                    type="text"
+                    value={updateProduct.nama}
+                    onChange={(e) =>
+                      setUpdateProduct({
+                        ...updateProduct,
+                        nama: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    required
+                    aria-label="Product Name"
+                  />
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Price
-                    </label>
-                    <input
-                      type="number"
-                      value={updateProduct.harga}
-                      onChange={(e) =>
-                        setUpdateProduct({
-                          ...updateProduct,
-                          harga: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      min="0"
-                      required
-                    />
-                  </div>
+                {/* Price */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Price
+                  </label>
+                  <input
+                    type="number"
+                    value={updateProduct.harga}
+                    onChange={(e) =>
+                      setUpdateProduct({
+                        ...updateProduct,
+                        harga: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    min="0"
+                    required
+                    aria-label="Product Price"
+                  />
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Stock
-                    </label>
-                    <input
-                      type="number"
-                      value={updateProduct.stok}
-                      onChange={(e) =>
-                        setUpdateProduct({
-                          ...updateProduct,
-                          stok: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      min="0"
-                      required
-                    />
-                  </div>
+                {/* Stock */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Stock
+                  </label>
+                  <input
+                    type="number"
+                    value={updateProduct.stok}
+                    onChange={(e) =>
+                      setUpdateProduct({
+                        ...updateProduct,
+                        stok: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    min="0"
+                    required
+                    aria-label="Product Stock"
+                  />
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Category
-                    </label>
-                    <select
-                      value={updateProduct.kategori}
-                      onChange={(e) =>
-                        setUpdateProduct({
-                          ...updateProduct,
-                          kategori: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      required
-                    >
-                      <option value="">Select Category</option>
-                      <option value="Makanan">Food</option>
-                      <option value="Minuman">Drink</option>
-                      <option value="Aksesoris">Accessories</option>
-                      <option value="Obat-obatan">Medicine</option>
-                      <option value="Elektronik">Electronics</option>
-                      <option value="Kecantikan">Beauty</option>
-                    </select>
-                  </div>
+                {/* Category */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Category
+                  </label>
+                  <select
+                    value={updateProduct.kategori}
+                    onChange={(e) =>
+                      setUpdateProduct({
+                        ...updateProduct,
+                        kategori: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    required
+                    aria-label="Product Category"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Makanan">Food</option>
+                    <option value="Minuman">Drink</option>
+                    <option value="Aksesoris">Accessories</option>
+                    <option value="Obat-obatan">Medicine</option>
+                    <option value="Elektronik">Electronics</option>
+                    <option value="Kecantikan">Beauty</option>
+                  </select>
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Description
-                    </label>
-                    <textarea
-                      value={updateProduct.keterangan}
-                      onChange={(e) =>
-                        setUpdateProduct({
-                          ...updateProduct,
-                          keterangan: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600/50 text-white rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-slate-700/70 focus:bg-slate-700/70"
-                      rows="3"
-                    />
-                  </div>
+                {/* Description */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Description
+                  </label>
+                  <textarea
+                    value={updateProduct.keterangan}
+                    onChange={(e) =>
+                      setUpdateProduct({
+                        ...updateProduct,
+                        keterangan: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2.5 bg-gray-700/50 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-300 hover:bg-gray-700/70"
+                    rows="3"
+                    aria-label="Product Description"
+                  />
+                </motion.div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">
-                      Product Image
-                    </label>
-                    {currentImageUrl && (
-                      <div className="mb-2">
-                        <p className="text-xs text-slate-400 mb-1">
-                          Current Image:
-                        </p>
-                        <img
-                          src={currentImageUrl}
-                          alt="Current product"
-                          className="h-20 w-20 object-cover rounded-md border border-slate-600/50"
-                        />
-                      </div>
-                    )}
-                    <input
-                      type="file"
-                      onChange={handleUpdateImageChange}
-                      className="block w-full text-sm text-slate-400
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-xl file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-orange-900/30 file:text-orange-400
-                        hover:file:bg-orange-900/50"
-                      accept="image/*"
-                    />
-                    <p className="text-xs text-slate-500 mt-1">
-                      {currentImageUrl
-                        ? "Select a new image to replace the current one, or leave blank to keep it"
-                        : "No image available, please upload one"}
-                    </p>
-                  </div>
-                </div>
+                {/* Product Image */}
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Product Image
+                  </label>
+                  {currentImageUrl && (
+                    <div className="mb-3">
+                      <p className="text-xs text-gray-400 mb-1">
+                        Current Image:
+                      </p>
+                      <img
+                        src={currentImageUrl}
+                        alt="Current product"
+                        className="h-20 sm:h-24 w-20 sm:w-24 object-cover rounded-md border border-gray-600/50"
+                      />
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    onChange={handleUpdateImageChange}
+                    className="block w-full text-sm text-gray-400
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-xl file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-900/30 file:text-blue-400
+              hover:file:bg-blue-900/50 hover:file:shadow-sm hover:file:shadow-blue-500/25 transition-all duration-200"
+                    accept="image/*"
+                    aria-label="Upload Product Image"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    {currentImageUrl
+                      ? "Select a new image to replace the current one, or leave blank to keep it"
+                      : "No image available, please upload one"}
+                  </p>
+                </motion.div>
 
-                <div className="mt-6 flex justify-end space-x-3">
+                {/* Actions */}
+                <motion.div
+                  variants={itemVariants}
+                  className="mt-6 flex justify-end space-x-3"
+                >
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -957,7 +1088,8 @@ const ProductManagement = () => {
                       setShowUpdateModal(false);
                       setUpdateImage(null);
                     }}
-                    className="px-4 py-2.5 border border-slate-600/50 text-slate-300 rounded-xl hover:bg-slate-700/50 transition-all duration-200"
+                    className="px-4 py-2.5 bg-gray-700/50 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-700/70 hover:text-white transition-all duration-200"
+                    aria-label="Cancel updating product"
                   >
                     Cancel
                   </motion.button>
@@ -966,13 +1098,16 @@ const ProductManagement = () => {
                     whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={loading}
-                    className="px-4 py-2.5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl hover:from-orange-500 hover:to-red-500 disabled:opacity-50 flex items-center shadow-lg hover:shadow-orange-500/25 relative overflow-hidden group"
+                    className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-500 hover:to-purple-500 disabled:opacity-50 flex items-center shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group"
+                    aria-label="Update product"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    {loading && <Loader2 className="animate-spin h-4 w-4 mr-2" />}
+                    {loading && (
+                      <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    )}
                     Update Product
                   </motion.button>
-                </div>
+                </motion.div>
               </form>
             </motion.div>
           </div>
