@@ -4,7 +4,7 @@
 # 🛒 SnapMart POS – Aplikasi Kasir Modern
 
 SnapMart POS adalah aplikasi fullstack berbasis Java & React yang dirancang untuk mendukung sistem kasir (POS) modern.
-Aplikasi ini memiliki fitur autentikasi JWT, manajemen kasir & produk, transaksi penjualan, hingga laporan penjualan.
+Aplikasi ini memiliki fitur autentikasi JWT, manajemen kasir & produk, transaksi penjualan, laporan penjualan, hingga ai asisten.
 
 Cocok digunakan untuk minimarket, apotek, toko fashion, maupun retail lainnya.
 
@@ -48,6 +48,12 @@ Cocok digunakan untuk minimarket, apotek, toko fashion, maupun retail lainnya.
 
 - **Pendapatan Harian, Mingguan, Bulanan, Tahunan**: fitur untuk melihat total penjualan.
 - **Pendapatan Custom Range**: Bisa pilih tanggal mulai dan akhir untuk laporan custom.
+
+### 7. 🤖 AI Asisten (Khusus Admin)
+
+- AI Chat Assistant: Membantu admin menganalisis data penjualan, produk, dan kasir dengan natural language.
+- Auto Report: Admin cukup bertanya (misal: "Pendapatan Tahun Ini") → sistem langsung menampilkan data.
+- Decision Support: Memberikan insight seperti produk terlaris, kasir paling aktif, hingga tren penjualan.
 
 ---
 
