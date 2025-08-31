@@ -97,11 +97,10 @@ public class AiServiceImpl implements AiService {
     @Override
     public String generateAiErrorResponse() {
         List<String> responses = List.of(
-            "⚠️ Maaf, sistem sedang mengalami kendala. Coba ulangi sebentar lagi ya.",
-            "🤖 Hmm, sepertinya ada gangguan teknis. Aku akan coba membantumu lagi nanti.",
-            "⚡ Wah, aku agak kesulitan memproses ini. Bisa dicoba lagi?",
-            "🙏 Maaf banget, ada masalah di sistemku. Silakan ulangi pertanyaanmu."
-        );
+                "⚠️ Maaf, sistem sedang mengalami kendala. Coba ulangi sebentar lagi ya.",
+                "🤖 Hmm, sepertinya ada gangguan teknis. Aku akan coba membantumu lagi nanti.",
+                "⚡ Wah, aku agak kesulitan memproses ini. Bisa dicoba lagi?",
+                "🙏 Maaf banget, ada masalah di sistemku. Silakan ulangi pertanyaanmu.");
         return responses.get(random.nextInt(responses.size()));
     }
 
@@ -174,11 +173,13 @@ public class AiServiceImpl implements AiService {
     private String callAiApi(String prompt) {
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", "Bearer " + apiKey);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("HTTP-Referer", "http://localhost:8080/ai/chat");
+            headers.set("X-Title", "HayMart AI");
 
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", "openai/gpt-4o-mini");
+            requestBody.put("model", "gpt-4o-mini");
 
             List<Map<String, String>> messages = new ArrayList<>();
             messages.add(Map.of("role", "system", "content", "Anda adalah AI pembuat query SQL."));
@@ -191,11 +192,59 @@ public class AiServiceImpl implements AiService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(BASE_URL, entity, String.class);
 
+            // ✅ log raw response dulu
+            System.out.println("Raw Response: " + response.getBody());
+
             JsonNode json = objectMapper.readTree(response.getBody());
             return json.path("choices").get(0).path("message").path("content").asText();
 
         } catch (Exception e) {
             throw new RuntimeException("Error callAiApi: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    /**
+     * Cek sisa limit API Key ke OpenRouter
+     */
+    public String checkApiKeyLimit() {
+        try {
+            String url = "https://openrouter.ai/api/v1/key";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + apiKey);
+
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    entity,
+                    String.class);
+
+            // ✅ log raw response
+            System.out.println("Raw Key Info: " + response.getBody());
+
+            JsonNode json = objectMapper.readTree(response.getBody());
+
+            // Ambil info limit request & token
+            int reqLimit = json.path("rate_limits").path("requests").path("limit").asInt();
+            int reqRemaining = json.path("rate_limits").path("requests").path("remaining").asInt();
+            int reqReset = json.path("rate_limits").path("requests").path("reset_seconds").asInt();
+
+            int tokenLimit = json.path("rate_limits").path("tokens").path("limit").asInt();
+            int tokenRemaining = json.path("rate_limits").path("tokens").path("remaining").asInt();
+            int tokenReset = json.path("rate_limits").path("tokens").path("reset_seconds").asInt();
+
+            return String.format(
+                    "🔑 API Key Limit:\n" +
+                            "- Requests: %d total, %d tersisa (reset %d detik)\n" +
+                            "- Tokens: %d total, %d tersisa (reset %d detik)",
+                    reqLimit, reqRemaining, reqReset,
+                    tokenLimit, tokenRemaining, tokenReset);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error checkApiKeyLimit: " + e.getMessage(), e);
         }
     }
 }

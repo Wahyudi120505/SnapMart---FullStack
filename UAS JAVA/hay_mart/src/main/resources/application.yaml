@@ -28,8 +28,10 @@ spring:
 
   ai:
     openai:
-      api-key: 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
-      # api-key: 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
+      api-key:
+        # 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
+        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
+        # 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
 
 mail:
   host: smtp.gmail.com

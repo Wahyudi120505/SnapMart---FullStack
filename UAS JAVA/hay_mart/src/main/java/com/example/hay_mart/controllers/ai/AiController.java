@@ -51,4 +51,15 @@ public class AiController {
                     .body("Error: " + e.getMessage());
         }
     }
+
+    @PostMapping("/check-limit")
+    public ResponseEntity<Object> checkLimit() {
+        try {
+            String result = aiService.checkApiKeyLimit();
+            return ResponseEntity.ok(GenericResponse.success(result, "Limit info retrieved"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
+
 }
