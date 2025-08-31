@@ -60,7 +60,7 @@ Cocok digunakan untuk minimarket, apotek, toko fashion, maupun retail lainnya.
 ## 🧠 Detail Keamanan
 
 - **Role Based Access Control (RBAC)**:
-  - **ROLE_ADMIN**: Terdapat fitur manajemen kasir, produk, transaksi, dan laporan.
+  - **ROLE_ADMIN**: Terdapat fitur manajemen kasir, produk, transaksi, laporan, dan ai asisstent.
   - **ROLE_KASIR**: Terdapat fitur dashboard, transaksi, dan edit profile.
 - **Verifikasi Email**: Kasir baru harus verifikasi email untuk aktif.
 
