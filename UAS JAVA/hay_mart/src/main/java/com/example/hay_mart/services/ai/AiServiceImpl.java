@@ -178,7 +178,7 @@ public class AiServiceImpl implements AiService {
             headers.set("Authorization", "Bearer " + apiKey);
 
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", "gpt-4o-mini");
+            requestBody.put("model", "openai/gpt-4o-mini");
 
             List<Map<String, String>> messages = new ArrayList<>();
             messages.add(Map.of("role", "system", "content", "Anda adalah AI pembuat query SQL."));
