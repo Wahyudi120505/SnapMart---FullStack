@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   User,
+  Bot,
 } from "lucide-react";
 import { AuthService } from "../../services/AuthService";
 
@@ -88,6 +89,12 @@ const AdminSidebar = ({ menuActive }) => {
           },
         ],
       },
+      {
+        id: "ai-assistant",
+        name: "AI Assistant",
+        icon: Bot,
+        path: `${basePath}/ai-assistant`, 
+      }
     ],
     [basePath]
   );

@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/**").permitAll()
                         .requestMatchers("/produk/get-all-produks").hasAnyAuthority(RoleConstant.ROLE_ADMIN ,RoleConstant.ROLE_KASIR)
                         .requestMatchers("/produk/**", "/laporan/**", "/kasir/get-all-kasir", "/kasir/update-status/**",
-                                "/kasir/history-all-kasir")
+                                "/kasir/history-all-kasir", "/ai/**")
                         .hasAuthority(RoleConstant.ROLE_ADMIN)
                         .requestMatchers("/pemesanan/**", "/kasir/edit-kasir/**", "/kasir/get-kasir/**").hasAuthority("KASIR")
                         .anyRequest().authenticated())

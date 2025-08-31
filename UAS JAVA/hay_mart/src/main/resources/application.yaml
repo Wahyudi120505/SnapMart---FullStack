@@ -13,6 +13,12 @@ spring:
       ddl-auto: update
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        transaction:
+          jta:
+            platform: org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform
+    open-in-view: false
 
   servlet:
     multipart:
@@ -20,6 +26,9 @@ spring:
       max-file-size: 2MB
       max-request-size: 2MB
 
+  ai:
+    openai:
+      api-key: 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
 
 mail:
   host: smtp.gmail.com

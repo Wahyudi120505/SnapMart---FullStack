@@ -33,6 +33,7 @@ import com.example.hay_mart.repositorys.UserRepository;
 import com.example.hay_mart.services.email.EmailService;
 import com.example.hay_mart.services.image.ConvertImageService;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -94,6 +95,7 @@ public class KasirServiceImpl implements KasirService {
     }
 
     @Override
+    @Transactional
     public List<PemesananResponse> getAllHistorysKasir() {
         List<Pemesanan> riwayat = pemesananRepository.findAll();
         List<PemesananResponse> responseList = new ArrayList<>();

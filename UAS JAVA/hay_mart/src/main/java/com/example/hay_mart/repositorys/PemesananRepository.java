@@ -20,7 +20,7 @@ public interface PemesananRepository extends JpaRepository<Pemesanan, Integer> {
 
         @Query("SELECT p FROM Pemesanan p WHERE p.userKasir = :user AND p.tanggalPembelian BETWEEN :start AND :end")
         List<Pemesanan> bulanan(@Param("user") User user, @Param("start") LocalDateTime start,
-                                @Param("end") LocalDateTime end);
+                        @Param("end") LocalDateTime end);
 
         @Query("select p from Pemesanan p where p.userKasir = :user and Year(p.tanggalPembelian) = :year")
         List<Pemesanan> tahunan(User user, String year);
@@ -36,4 +36,9 @@ public interface PemesananRepository extends JpaRepository<Pemesanan, Integer> {
         @Query("select p from Pemesanan p where p.tanggalPembelian between :startDate and :endDate")
         public List<Pemesanan> modal(LocalDateTime startDate, LocalDateTime endDate);
 
+        // Tambahkan method ini di PemesananRepository
+        @Query("SELECT p FROM Pemesanan p WHERE p.userKasir = :userKasir AND p.tanggalPembelian BETWEEN :start AND :end")
+        List<Pemesanan> findByUserKasirAndTanggalPembelianBetween(@Param("userKasir") User userKasir,
+                        @Param("start") LocalDateTime start,
+                        @Param("end") LocalDateTime end);
 }

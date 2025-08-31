@@ -21,6 +21,7 @@ import ProfileController from "./pages/kasir/ProfileController.jsx";
 import OrderController from "./pages/admin/OrderController.jsx";
 import LaporanProductController from "./pages/admin/LaporanProdukController.jsx";
 import LaporanPendapatanController from "./pages/admin/LaporanPendapatanController.jsx";
+import AiAssistantController from "./pages/admin/AiAssistantController.jsx";
 
 const router = createBrowserRouter([
   {
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
                 element: <LaporanPendapatanController />
               }
             ]
+          },
+          {
+            path: "ai-assistant",
+            element: <AiAssistantController />,
           },
         ],
       },
