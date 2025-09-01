@@ -551,7 +551,6 @@ const DashboardKasir = () => {
             )}
           </div>
         </motion.div>
-        
         {/* Transaction Detail Modal */}
         <AnimatePresence>
           {showDetailModal && selectedTransaction && (
@@ -580,7 +579,11 @@ const DashboardKasir = () => {
                 {/* Header */}
                 <div className=" top-0 bg-gray-800/95 p-3 sm:p-4 border-b border-gray-700/50 flex justify-between items-center z-90">
                   <h2 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-wide">
-                    Transaksi #{selectedTransaction.pemesananId}
+                    Transaksi #
+                    {transactions.findIndex(
+                      (trx) =>
+                        trx.pemesananId === selectedTransaction.pemesananId
+                    ) + 1}
                   </h2>
                   <motion.button
                     whileHover={{ rotate: 90 }}

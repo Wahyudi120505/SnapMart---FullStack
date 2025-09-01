@@ -182,7 +182,7 @@ public class AiServiceImpl implements AiService {
             requestBody.put("model", "gpt-4o-mini");
 
             List<Map<String, String>> messages = new ArrayList<>();
-            messages.add(Map.of("role", "system", "content", "Anda adalah AI pembuat query SQL."));
+            // messages.add(Map.of("role", "system", "content", "Anda adalah AI pembuat query SQL."));
             messages.add(Map.of("role", "user", "content", prompt));
 
             requestBody.put("messages", messages);
@@ -203,10 +203,11 @@ public class AiServiceImpl implements AiService {
         }
     }
 
-    @Override
+    
     /**
      * Cek sisa limit API Key ke OpenRouter
      */
+    @Override
     public String checkApiKeyLimit() {
         try {
             String url = "https://openrouter.ai/api/v1/key";

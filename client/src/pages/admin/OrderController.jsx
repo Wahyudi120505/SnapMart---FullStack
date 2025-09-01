@@ -681,9 +681,6 @@ const OrderDetailModal = ({
             scrollbarColor: "#4b5563 #1f2937",
           }}
         >
-          {/* Glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl pointer-events-none"></div>
-
           {/* Header */}
           <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-700/50 bg-gradient-to-r from-gray-800 to-gray-800/70">
             <h3 className="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
